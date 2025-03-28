@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const { watchFiles } = require("./watcher");
 const { analyzeFile } = require("./analyzer");
 const { installMissingDependencies } = require("./installer");
