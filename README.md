@@ -1,6 +1,6 @@
 # Auto-Dep-Install
 
-**Auto-Dep-Install** is a Node.js CLI tool designed to reduce the extra effort developers face by having to repeatedly run `npm install` from the console. It automatically monitors your codebase for external dependencies (through `import` or `require` statements) and ensures that only the packages actually used in your code are installed. When you add an import, it installs the package; when you remove it, the package is uninstalled automatically.
+**Auto-Dep-Install** is a Node.js CLI tool designed to reduce the extra effort developers face by having to repeatedly run `npm install` from the console. It automatically monitors your codebase for external dependencies (through `import` or `require` statements) and ensures that only the packages actually used in your code are installed. When you add an import, it installs the package; when you remove it, the package is uninstalled automatically. 
 
 This tool works seamlessly in Node.js, React, and React Native projects.
 
