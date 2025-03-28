@@ -7,7 +7,7 @@ const watchFiles = () => {
     console.log("Auto-Install-Deps is now running...");
 
     const watchPath = path.resolve("./");
-    console.log(`🔍 Watching directory: ${watchPath}`);
+    console.log(`Watching directory: ${watchPath}`);
 
     const watcher = chokidar.watch(watchPath, {
         ignored: /node_modules|package\.json|package-lock\.json/,
@@ -21,7 +21,7 @@ const watchFiles = () => {
     });
 
     watcher.on("change", (filePath) => {
-        if (!filePath.endsWith(".js")) {
+        if (!filePath.endsWith(".js") && !filePath.endsWith(".jsx") && !filePath.endsWith(".tsx")) {
             return;
         }
 

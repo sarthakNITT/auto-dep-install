@@ -14,7 +14,8 @@ const getInstalledPackages = () => {
 
 const installMissingDependencies = (dependencies) => {
     const installedPackages = getInstalledPackages();
-    const missingPackages = dependencies.filter((pkg) => !installedPackages.includes(pkg));
+    const validPackages = dependencies.filter(pkg => !pkg.startsWith("./") && !pkg.startsWith("../"));
+    const missingPackages = validPackages.filter(pkg => !installedPackages.includes(pkg));
 
     if (missingPackages.length === 0) {
         console.log("All dependencies are already installed.");
