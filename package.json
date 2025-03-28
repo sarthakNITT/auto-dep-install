@@ -1,0 +1,27 @@
+{
+  "name": "auto-dep-install",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Automatically detects the package being used in the code and install it in the project env. User doesn't need to install packages manually now, they can write code smoothly without thinking about the package installation and linking",
+  "bin": {
+    "auto-install": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "auto-install": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "acorn": "^8.14.0",
+    "acorn-walk": "^8.3.4",
+    "bcrypt": "^5.1.1",
+    "chokidar": "^4.0.3",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.14.2",
+    "mongoose": "^8.12.1"
+  }
+}
