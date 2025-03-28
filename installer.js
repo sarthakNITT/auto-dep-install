@@ -14,6 +14,7 @@ const getInstalledPackages = () => {
 
 const installMissingDependencies = (dependencies) => {
     const installedPackages = getInstalledPackages();
+    // Filter out local file imports
     const validPackages = dependencies.filter(pkg => !pkg.startsWith("./") && !pkg.startsWith("../"));
     const missingPackages = validPackages.filter(pkg => !installedPackages.includes(pkg));
 

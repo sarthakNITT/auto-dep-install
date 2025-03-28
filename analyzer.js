@@ -1,41 +1,41 @@
 const acorn = require("acorn");
+const walk = require("acorn-walk");
 const fs = require("fs");
 
 function analyzeFile(filePath) {
     try {
         const code = fs.readFileSync(filePath, "utf-8");
 
-        const parsed = acorn.parse(code, { 
-            ecmaVersion: "latest", 
-            sourceType: "module" // Change to 'module' for ES6 support
+        const ast = acorn.parse(code, {
+            ecmaVersion: "latest",
+            sourceType: "module",
         });
 
-        const dependencies = [];
+        const dependencies = new Set();
 
-        parsed.body.forEach((node) => {
-            // Detect CommonJS require()
-            if (node.type === "VariableDeclaration") {
-                node.declarations.forEach((declaration) => {
-                    if (
-                        declaration.init &&
-                        declaration.init.type === "CallExpression" &&
-                        declaration.init.callee.name === "require"
-                    ) {
-                        dependencies.push(declaration.init.arguments[0].value);
-                    }
-                });
-            }
-
-            // Detect ES6 import statements
-            if (node.type === "ImportDeclaration") {
-                dependencies.push(node.source.value);
-            }
+        // Use acorn-walk to traverse the AST
+        walk.simple(ast, {
+            ImportDeclaration(node) {
+                dependencies.add(node.source.value);
+            },
+            CallExpression(node) {
+                if (
+                    node.callee &&
+                    node.callee.name === "require" &&
+                    node.arguments &&
+                    node.arguments.length === 1 &&
+                    node.arguments[0].type === "Literal"
+                ) {
+                    dependencies.add(node.arguments[0].value);
+                }
+            },
         });
 
-        console.log("Dependencies found:", dependencies);
-        return dependencies;
+        const depsArray = Array.from(dependencies);
+        console.log("Dependencies found in", filePath, ":", depsArray);
+        return depsArray;
     } catch (error) {
-        console.error("Parsing error:", error.message);
+        console.error("Parsing error in", filePath, ":", error.message);
         return [];
     }
 }

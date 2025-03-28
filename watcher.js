@@ -16,8 +16,7 @@ const watchFiles = () => {
     });
 
     watcher.on("ready", () => {
-        console.log("Watching the following files:");
-        console.log(watcher.getWatched());
+        console.log("Initial scan complete. Watching for file changes...");
     });
 
     watcher.on("change", (filePath) => {
@@ -34,7 +33,7 @@ const watchFiles = () => {
     });
 
     watcher.on("error", (error) => {
-        console.error("Chokidar Error:", error);
+        console.error("Chokidar error:", error);
     });
 };
 
