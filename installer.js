@@ -17,16 +17,16 @@ const installMissingDependencies = (dependencies) => {
     const missingPackages = dependencies.filter((pkg) => !installedPackages.includes(pkg));
 
     if (missingPackages.length === 0) {
-        console.log("✅ All dependencies are already installed.");
+        console.log("All dependencies are already installed.");
         return;
     }
 
     console.log(`📦 Installing missing packages: ${missingPackages.join(", ")}`);
     try {
         execSync(`npm install ${missingPackages.join(" ")}`, { stdio: "inherit" });
-        console.log("✅ Installation complete.");
+        console.log("Installation complete.");
     } catch (error) {
-        console.error("❌ Error installing dependencies:", error);
+        console.error("Error installing dependencies:", error);
     }
 };
 

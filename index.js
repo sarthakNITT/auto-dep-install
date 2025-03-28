@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const { watchFiles } = require("./watcher");
 const { analyzeFile } = require("./analyzer");
 const { installMissingDependencies } = require("./installer");
@@ -19,8 +18,8 @@ if (args.includes("--install")) {
         parsedDependencies.forEach(dep => dependencies.add(dep));
     });
 
-    installMissingDependencies([...dependencies]); // Install detected packages
+    installMissingDependencies([...dependencies]); 
 } else {
-    console.log("🚀 Auto-Install-Deps is now running...");
-    watchFiles(); // Start watching files normally
+    console.log("Auto-Install-Deps is now running...");
+    watchFiles(); 
 }

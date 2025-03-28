@@ -5,10 +5,8 @@ function analyzeFile(filePath) {
     try {
         const code = fs.readFileSync(filePath, "utf-8");
 
-        // Parse JavaScript code
         const parsed = acorn.parse(code, { ecmaVersion: "latest", sourceType: "script" });
 
-        // Extract dependencies
         const dependencies = [];
         parsed.body.forEach((node) => {
             if (node.type === "VariableDeclaration") {
@@ -24,10 +22,10 @@ function analyzeFile(filePath) {
             }
         });
 
-        console.log("✅ Dependencies found:", dependencies);
+        console.log("Dependencies found:", dependencies);
         return dependencies;
     } catch (error) {
-        console.error("❌ Parsing error:", error.message);
+        console.error("Parsing error:", error.message);
         return [];
     }
 }
