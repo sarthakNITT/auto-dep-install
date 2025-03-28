@@ -1,7 +1,16 @@
 const chokidar = require("chokidar");
 const path = require("path");
-const { analyzeFile } = require("./analyzer");
-const { installMissingDependencies } = require("./installer");
+const { scanProjectDependencies } = require("./scanner");
+const { installMissingDependencies, uninstallUnusedDependencies } = require("./installer");
+
+// Debounce helper to prevent too frequent executions
+function debounce(func, wait) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
 
 const watchFiles = () => {
     console.log("Auto-Install-Deps is now running...");
@@ -19,17 +28,31 @@ const watchFiles = () => {
         console.log("Initial scan complete. Watching for file changes...");
     });
 
+    // Debounced update function that re-scans all files and installs/uninstalls dependencies.
+    const updateDependencies = debounce(() => {
+        const deps = scanProjectDependencies();
+        installMissingDependencies(deps);
+        uninstallUnusedDependencies(deps);
+    }, 500);
+
+    // Trigger update on file addition
+    watcher.on("add", (filePath) => {
+        if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
+        console.log(`File added: ${filePath}`);
+        updateDependencies();
+    });
+
+    // Trigger update on file change
     watcher.on("change", (filePath) => {
-        if (!filePath.endsWith(".js") && !filePath.endsWith(".jsx") && !filePath.endsWith(".tsx")) {
-            return;
-        }
-
+        if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
         console.log(`File changed: ${filePath}`);
-        const dependencies = analyzeFile(filePath);
+        updateDependencies();
+    });
 
-        if (dependencies.length > 0) {
-            installMissingDependencies(dependencies);
-        }
+    // Trigger update on file removal
+    watcher.on("unlink", (filePath) => {
+        console.log(`File removed: ${filePath}`);
+        updateDependencies();
     });
 
     watcher.on("error", (error) => {

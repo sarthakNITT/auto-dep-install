@@ -1,27 +1,15 @@
 #!/usr/bin/env node
 const { watchFiles } = require("./watcher");
-const { analyzeFile } = require("./analyzer");
-const { installMissingDependencies } = require("./installer");
-const fs = require("fs");
-const path = require("path");
+const { installMissingDependencies, uninstallUnusedDependencies } = require("./installer");
+const { scanProjectDependencies } = require("./scanner");
 
 const args = process.argv.slice(2);
 
 if (args.includes("--install")) {
-    console.log("🔍 Scanning all files for dependencies...");
-
-    // Adjust the file filter if needed; currently only scans .js files
-    const files = fs.readdirSync(path.resolve("./")).filter(file => file.endsWith(".js"));
-
-    let dependencies = new Set();
-    files.forEach(file => {
-        console.log(`📄 Analyzing ${file}...`);
-        const parsedDeps = analyzeFile(file);
-        parsedDeps.forEach(dep => dependencies.add(dep));
-    });
-
-    installMissingDependencies([...dependencies]); 
+    const projectDependencies = scanProjectDependencies();
+    installMissingDependencies(projectDependencies);
+    uninstallUnusedDependencies(projectDependencies);
 } else {
     console.log("Auto-Install-Deps is now running...");
-    watchFiles(); 
+    watchFiles();
 }
