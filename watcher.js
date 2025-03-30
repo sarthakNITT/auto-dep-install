@@ -35,7 +35,7 @@ const watchFiles = () => {
     // watcher.on("ready", () => {
     //     console.log("Initial scan complete. Watching for file changes...");
     //     if (initialRun) {
-    //         initialRun = false;  // 👈 Mark that the first run is done
+    //         initialRun = false;  
     //         const deps = scanProjectDependencies();
     //         installMissingDependencies(deps);  // Only install missing dependencies, NOT update existing ones
     //     }
@@ -44,7 +44,7 @@ const watchFiles = () => {
         console.log("Initial scan complete. Watching for file changes...");
         
         if (!hasStarted) {
-            hasStarted = true;  // Ensure it runs only once
+            hasStarted = true;  
             const deps = scanProjectDependencies();
             installMissingDependencies(deps);
             uninstallUnusedDependencies(deps);

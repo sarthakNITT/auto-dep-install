@@ -14,8 +14,7 @@ const IGNORED_PATHS = new Set([
 
 function shouldIgnore(filePath) {
   const relativePath = path.relative(process.cwd(), filePath);
-  return IGNORED_PATHS.has(path.basename(filePath)) || 
-         relativePath.split(path.sep).some(segment => IGNORED_PATHS.has(segment));
+  return IGNORED_PATHS.has(path.basename(filePath)) || relativePath.split(path.sep).some(segment => IGNORED_PATHS.has(segment));
 }
 
 function analyzeFile(filePath) {

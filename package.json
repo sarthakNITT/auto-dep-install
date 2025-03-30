@@ -18,13 +18,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "auto-install": "node index.js"
   },
-  "keywords": ["auto install", "dependencies", "npm", "auto package install"],
+  "keywords": [
+    "auto install",
+    "dependencies",
+    "npm",
+    "auto package install"
+  ],
   "author": "Sarthak karode",
   "license": "ISC",
   "dependencies": {
     "@babel/parser": "^7.27.0",
     "@babel/traverse": "^7.27.0",
+    "chalk": "^4.0.0",
+    "child_process": "^1.0.2",
     "chokidar": "^4.0.3",
-    "lodash": "^4.17.21"
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
   }
 }

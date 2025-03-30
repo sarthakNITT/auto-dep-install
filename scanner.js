@@ -20,12 +20,12 @@ function getAllFiles(dir, fileList = []) {
 }
 
 function scanProjectDependencies() {
-    console.log("🔍 Scanning all files for dependencies...");
+    console.log("Scanning all files for dependencies...");
     const projectFiles = getAllFiles(path.resolve("./"));
     const dependenciesSet = new Set();
 
     projectFiles.forEach(file => {
-        console.log(`📄 Analyzing ${file}...`);
+        console.log(`Analyzing ${file}...`);
         const deps = analyzeFile(file);
         deps.forEach(dep => dependenciesSet.add(dep));
     });

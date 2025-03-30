@@ -5,23 +5,23 @@ const path = require("path");
 // const getInstalledPackages = () => {
 //     try {
 //         const packageJson = JSON.parse(fs.readFileSync(path.resolve("package.json"), "utf-8"));
-//         console.log("🔍 Installed dependencies from package.json:", packageJson.dependencies);
+//         console.log("Installed dependencies from package.json:", packageJson.dependencies);
 //         // return Object.keys(packageJson.dependencies || {}); // Convert to array
 //         return packageJson.dependencies || {};
 //     } catch (err) {
-//         console.error("⚠️ package.json not found. Run 'npm init -y' first.");
+//         console.error("package.json not found. Run 'npm init -y' first.");
 //         return [];
 //     }
 // };
 const getInstalledPackages = () => {
     try {
         const packageJson = JSON.parse(fs.readFileSync(path.resolve("package.json"), "utf-8"));
-        console.log("🔍 Installed dependencies from package.json:", packageJson.dependencies);
+        console.log("Installed dependencies from package.json:", packageJson.dependencies);
         // *****----->>>>>OLD CODE<<<<<-----*****
         // return Object.keys(packageJson.dependencies || {}); // Convert dependencies object to an array
         return packageJson.dependencies || {};
     } catch (err) {
-        console.error("⚠️ package.json not found. Run 'npm init -y' first.");
+        console.error("package.json not found. Run 'npm init -y' first.");
         return [];
     }
 };
@@ -45,13 +45,13 @@ const findCompatibleVersion = (pkg) => {
         const peerDependencyOutput = execSync(`npm show ${pkg} peerDependencies --json`).toString().trim();
 
         if (!peerDependencyOutput || peerDependencyOutput === "{}") {
-            console.log(`ℹ️ No peer dependencies found for ${pkg}.`);
+            console.log(`No peer dependencies found for ${pkg}.`);
             return null;
         }
 
         
         if (!peerDependency) {
-            console.log(`ℹ️ No peer dependencies found for ${pkg}.`);
+            console.log(`No peer dependencies found for ${pkg}.`);
             return null;
         }
 
@@ -59,11 +59,11 @@ const findCompatibleVersion = (pkg) => {
         const installedPeerVersion = installedPackages[peerDepName];
 
         if (!installedPeerVersion) {
-            console.log(`⚠️ Required peer dependency ${peerDepName} is not installed.`);
+            console.log(`Required peer dependency ${peerDepName} is not installed.`);
             return null;
         }
 
-        console.log(`🔍 Searching for a version of ${pkg} that works with ${peerDepName}@${installedPeerVersion}`);
+        console.log(`Searching for a version of ${pkg} that works with ${peerDepName}@${installedPeerVersion}`);
 
         const availableVersions = JSON.parse(execSync(`npm show ${pkg} versions --json`).toString().trim());
 
@@ -79,7 +79,7 @@ const findCompatibleVersion = (pkg) => {
                     }
                 }
             } catch (error) {
-                console.warn(`⚠️ Skipping ${pkg}@${version} due to an error fetching peer dependencies.`);
+                console.warn(`Skipping ${pkg}@${version} due to an error fetching peer dependencies.`);
             }
                         
             if (peerDepsForVersion) {
@@ -125,7 +125,7 @@ const installMissingDependencies = (dependencies) => {
     } else {
         // *****----->>>>>OLD CODE<<<<<-----*****
         // if (missingPackages.length > 0) {
-        //     console.log(`📦 Installing missing packages: ${missingPackages.join(", ")}`);
+        //     console.log(`Installing missing packages: ${missingPackages.join(", ")}`);
         //     try {
         //         execSync(`npm install ${missingPackages.join(" ")}`, { stdio: "inherit" });
         //         console.log("Installation complete.");
@@ -134,33 +134,33 @@ const installMissingDependencies = (dependencies) => {
         //     }
         // }
         if (missingPackages.length > 0) {
-            console.log(`📦 Installing missing packages: ${missingPackages.join(", ")}`);
+            console.log(`Installing missing packages: ${missingPackages.join(", ")}`);
             missingPackages.forEach(pkg => {
                 try {
                     execSync(`npm install ${pkg}`, { stdio: "inherit" });
-                    console.log(`✅ Successfully installed ${pkg}`);
+                    console.log(`Successfully installed ${pkg}`);
                 } catch (error) {
                     if (error.message.includes("could not resolve dependency")) {
-                        console.warn(`⚠️ Peer dependency conflict detected for ${pkg}. Finding a compatible version...`);
+                        console.warn(`Peer dependency conflict detected for ${pkg}. Finding a compatible version...`);
                         const compatibleVersion = findCompatibleVersion(pkg);
                         if (compatibleVersion) {
-                            console.log(`📌 Installing compatible version: ${pkg}@${compatibleVersion}`);
+                            console.log(`Installing compatible version: ${pkg}@${compatibleVersion}`);
                             try {
                                 execSync(`npm install ${pkg}@${compatibleVersion}`, { stdio: "inherit" });
-                                console.log(`✅ Successfully installed compatible version: ${pkg}@${compatibleVersion}`);
+                                console.log(`Successfully installed compatible version: ${pkg}@${compatibleVersion}`);
                             } catch (error) {
-                                console.error(`❌ Failed to install ${pkg}@${compatibleVersion}. Skipping.`);
+                                console.error(`Failed to install ${pkg}@${compatibleVersion}. Skipping.`);
                             }
                         } else {
-                            console.error(`❌ No compatible version found for ${pkg}. Skipping installation.`);
+                            console.error(`No compatible version found for ${pkg}. Skipping installation.`);
                         }
                     } else {
-                        console.warn(`⚠️ Installation of ${pkg} failed. Retrying with --legacy-peer-deps...`);
+                        console.warn(`Installation of ${pkg} failed. Retrying with --legacy-peer-deps...`);
                         try {
                             execSync(`npm install ${pkg} --legacy-peer-deps`, { stdio: "inherit" });
-                            console.log(`✅ Successfully installed ${pkg} with --legacy-peer-deps`);
+                            console.log(`Successfully installed ${pkg} with --legacy-peer-deps`);
                         } catch (error) {
-                            console.error(`❌ Installation failed for ${pkg} even with --legacy-peer-deps.`, error);
+                            console.error(`Installation failed for ${pkg} even with --legacy-peer-deps.`, error);
                         }
                     }
                 }                
@@ -168,7 +168,7 @@ const installMissingDependencies = (dependencies) => {
         }        
 
         if (outdatedPackages.length > 0) {
-            console.log(`🔄 Updating outdated packages: ${outdatedPackages.join(", ")}`);
+            console.log(`Updating outdated packages: ${outdatedPackages.join(", ")}`);
             try {
                 execSync(`npm install ${outdatedPackages.map(pkg => `${pkg}@latest`).join(" ")}`, { stdio: "inherit" });
                 console.log("Update complete.");
@@ -190,7 +190,7 @@ const uninstallUnusedDependencies = (projectDependencies) => {
     if (unusedPackages.length === 0) {
         console.log("No unused packages to uninstall.");
     } else {
-        console.log(`🗑️ Uninstalling unused packages: ${unusedPackages.join(", ")}`);
+        console.log(`Uninstalling unused packages: ${unusedPackages.join(", ")}`);
         try {
             execSync(`npm uninstall ${unusedPackages.join(" ")}`, { stdio: "inherit" });
             console.log("Uninstallation complete.");
