@@ -200,4 +200,4 @@ const uninstallUnusedDependencies = (projectDependencies) => {
     }
 };
 
-module.exports = { installMissingDependencies, uninstallUnusedDependencies };
+module.exports = { installMissingDependencies, uninstallUnusedDependencies, getInstalledPackages, getLatestVersion, findCompatibleVersion };

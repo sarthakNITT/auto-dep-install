@@ -15,8 +15,8 @@
     "url": "https://github.com/sarthakNITT/auto-dep-install"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "auto-install": "node index.js"
+    "auto-install": "node index.js",
+    "test": "jest"
   },
   "keywords": [
     "auto install",
@@ -29,10 +29,12 @@
   "dependencies": {
     "@babel/parser": "^7.27.0",
     "@babel/traverse": "^7.27.0",
-    "chalk": "^4.0.0",
     "child_process": "^1.0.2",
     "chokidar": "^4.0.3",
     "fs": "^0.0.1-security",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

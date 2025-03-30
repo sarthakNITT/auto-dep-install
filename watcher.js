@@ -79,4 +79,4 @@ const watchFiles = () => {
     });
 };
 
-module.exports = { watchFiles };
+module.exports = { watchFiles, debounce };

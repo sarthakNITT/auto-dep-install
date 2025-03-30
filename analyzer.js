@@ -127,4 +127,4 @@ function analyzeFile(filePath) {
   }
 }
 
-module.exports = { analyzeFile };
+module.exports = { analyzeFile, shouldIgnore, analyzeFile };

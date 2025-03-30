@@ -3,7 +3,9 @@ const path = require("path");
 const { analyzeFile } = require("./analyzer");
 
 function getAllFiles(dir, fileList = []) {
-    const files = fs.readdirSync(dir);
+    // *****----->>>>>OLD CODE<<<<<-----*****
+    // const files = fs.readdirSync(dir);
+    const files = fs.readdirSync(dir) || []; 
     files.forEach(file => {
         const fullPath = path.join(dir, file);
         if (fs.statSync(fullPath).isDirectory()) {
@@ -27,10 +29,11 @@ function scanProjectDependencies() {
     projectFiles.forEach(file => {
         console.log(`Analyzing ${file}...`);
         const deps = analyzeFile(file);
+        console.log(`Dependencies found in ${file}:`, deps);
         deps.forEach(dep => dependenciesSet.add(dep));
     });
-
+    console.log("Final dependencies:", [...dependenciesSet]); 
     return [...dependenciesSet];
 }
 
-module.exports = { scanProjectDependencies };
+module.exports = { scanProjectDependencies, getAllFiles };
