@@ -6,21 +6,25 @@
   "bin": {
     "auto-install": "./index.js"
   },
+  "bugs": {
+    "url": "https://github.com/sarthakNITT/auto-dep-install/issues"
+  },
+  "homepage": "https://github.com/sarthakNITT/auto-dep-install#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sarthakNITT/auto-dep-install"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "auto-install": "node index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["auto install", "dependencies", "npm", "auto package install"],
+  "author": "Sarthak karode",
   "license": "ISC",
   "dependencies": {
-    "acorn": "^8.14.1",
-    "acorn-jsx": "^5.3.2",
-    "acorn-walk": "^8.3.4",
-    "child_process": "^1.0.2",
+    "@babel/parser": "^7.27.0",
+    "@babel/traverse": "^7.27.0",
     "chokidar": "^4.0.3",
-    "fs": "^0.0.1-security",
-    "lodash": "^4.17.21",
-    "path": "^0.12.7"
+    "lodash": "^4.17.21"
   }
 }

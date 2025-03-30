@@ -3,7 +3,6 @@ const path = require("path");
 const { scanProjectDependencies } = require("./scanner");
 const { installMissingDependencies, uninstallUnusedDependencies } = require("./installer");
 
-// Debounce helper to prevent too frequent executions
 function debounce(func, wait) {
   let timeout;
   return (...args) => {
@@ -12,7 +11,13 @@ function debounce(func, wait) {
   };
 }
 
+let hasStarted = false;
+
 const watchFiles = () => {
+
+    if (hasStarted) return;
+    hasStarted = true;  
+
     console.log("Auto-Install-Deps is now running...");
 
     const watchPath = path.resolve("./");
@@ -24,32 +29,46 @@ const watchFiles = () => {
         persistent: true,
     });
 
+    let initialRun = true;
+
+    // *****----->>>>>OLD CODE<<<<<-----*****
+    // watcher.on("ready", () => {
+    //     console.log("Initial scan complete. Watching for file changes...");
+    //     if (initialRun) {
+    //         initialRun = false;  // 👈 Mark that the first run is done
+    //         const deps = scanProjectDependencies();
+    //         installMissingDependencies(deps);  // Only install missing dependencies, NOT update existing ones
+    //     }
+    // });
     watcher.on("ready", () => {
         console.log("Initial scan complete. Watching for file changes...");
-    });
+        
+        if (!hasStarted) {
+            hasStarted = true;  // Ensure it runs only once
+            const deps = scanProjectDependencies();
+            installMissingDependencies(deps);
+            uninstallUnusedDependencies(deps);
+        }
+    });    
 
-    // Debounced update function that re-scans all files and installs/uninstalls dependencies.
     const updateDependencies = debounce(() => {
         const deps = scanProjectDependencies();
         installMissingDependencies(deps);
         uninstallUnusedDependencies(deps);
     }, 500);
 
-    // Trigger update on file addition
     watcher.on("add", (filePath) => {
         if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
         console.log(`File added: ${filePath}`);
         updateDependencies();
     });
 
-    // Trigger update on file change
     watcher.on("change", (filePath) => {
         if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
         console.log(`File changed: ${filePath}`);
         updateDependencies();
     });
 
-    // Trigger update on file removal
     watcher.on("unlink", (filePath) => {
         console.log(`File removed: ${filePath}`);
         updateDependencies();

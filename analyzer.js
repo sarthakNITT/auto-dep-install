@@ -1,59 +1,123 @@
-const acorn = require("acorn");
-const jsx = require("acorn-jsx");
-const walk = require("acorn-walk");
+const parser = require("@babel/parser");
+const traverse = require("@babel/traverse").default;
 const fs = require("fs");
+const path = require("path");
 
-// Extend acorn parser with JSX support
-const Parser = acorn.Parser.extend(jsx());
+const IGNORED_PATHS = new Set([
+  "node_modules", "dist", "build", ".git", ".github", ".vscode", ".idea", ".expo",
+  ".expo-shared", "coverage", "test-results", "logs", "Pods", "ios", "android",
+  "package-lock.json", "yarn.lock", "pnpm-lock.yaml", ".env", ".DS_Store",
+  ".eslintcache", ".prettierignore", ".prettierrc", ".babelrc", ".editorconfig",
+  "metro.config.js", "babel.config.js", "jest.config.js", "tsconfig.json",
+  "webpack.config.js, App.test.tsx"
+]);
+
+function shouldIgnore(filePath) {
+  const relativePath = path.relative(process.cwd(), filePath);
+  return IGNORED_PATHS.has(path.basename(filePath)) || 
+         relativePath.split(path.sep).some(segment => IGNORED_PATHS.has(segment));
+}
 
 function analyzeFile(filePath) {
+  if (shouldIgnore(filePath)) {
+    console.log(`Skipping ignored file: ${filePath}`);
+    return [];
+  }
+  
   try {
     const code = fs.readFileSync(filePath, "utf-8");
-    // Use the extended parser to handle JSX syntax
-    const ast = Parser.parse(code, {
-      ecmaVersion: "latest",
+
+    const ast = parser.parse(code, {
       sourceType: "module",
+      plugins: ["jsx", "typescript"],
     });
 
     const dependencies = new Set();
+    // *****----->>>>>OLD CODE<<<<<-----*****
+    // traverse(ast, {
+    //   ImportDeclaration({ node }) {
+    //     const dep = node.source.value;
+        
+    //     // Ignore internal React Native modules
+    //     // if (
+    //     //   !dep.startsWith("react-native/Libraries/") &&
+    //     //   !dep.startsWith(".") &&
+    //     //   !dep.startsWith("/")
+    //     // ) {
+    //     //   dependencies.add(dep);
+    //     // }
+    //     if (dep.startsWith("./") || dep.startsWith("../")) return; // Ignore relative imports
 
-    // Define the visitors for the node types you care about
-    const visitors = {
-      ImportDeclaration(node) {
-        // Only include external modules (skip relative paths)
-        if (node.source.value[0] !== "." && node.source.value[0] !== "/") {
-          dependencies.add(node.source.value);
+    //     const parentPackage = dep.includes("/") ? dep.split("/")[0] : dep;
+    //     dependencies.add(parentPackage);
+    //   },
+    //   CallExpression({ node }) {
+    //     // if (
+    //     //   node.callee &&
+    //     //   node.callee.name === "require" &&
+    //     //   node.arguments &&
+    //     //   node.arguments.length === 1 &&
+    //     //   node.arguments[0].type === "StringLiteral"
+    //     // ) {
+    //     //   const dep = node.arguments[0].value;
+          
+    //     //   // Ignore internal React Native modules
+    //     //   if (
+    //     //     typeof dep === "string" &&
+    //     //     !dep.startsWith("react-native/Libraries/") &&
+    //     //     !dep.startsWith(".") &&
+    //     //     !dep.startsWith("/")
+    //     //   ) {
+    //     //     dependencies.add(dep);
+    //     //   }
+    //     // }
+    //     if (
+    //       node.callee?.name === "require" &&
+    //       node.arguments?.length === 1 &&
+    //       node.arguments[0].type === "StringLiteral"
+    //     ) {
+    //         const dep = node.arguments[0].value;
+            
+    //         if (dep.startsWith("./") || dep.startsWith("../")) return; // Ignore relative imports
+    
+    //         const parentPackage = dep.includes("/") ? dep.split("/")[0] : dep;
+    //         dependencies.add(parentPackage);
+    //     }
+    //   },
+    // });
+
+    traverse(ast, {
+      ImportDeclaration({ node }) {
+        const dep = node.source.value;
+        if (dep.startsWith("./") || dep.startsWith("../")) return; 
+        
+        let parentPackage;
+        if (dep.startsWith("@")) {
+          parentPackage = dep.split("/").slice(0, 2).join("/");
+        } else {
+          parentPackage = dep.split("/")[0];
         }
+        dependencies.add(parentPackage);
       },
-      CallExpression(node) {
+      CallExpression({ node }) {
         if (
-          node.callee &&
-          node.callee.name === "require" &&
-          node.arguments &&
-          node.arguments.length === 1 &&
-          node.arguments[0].type === "Literal"
+          node.callee?.name === "require" &&
+          node.arguments?.length === 1 &&
+          node.arguments[0].type === "StringLiteral"
         ) {
-          const dep = node.arguments[0].value;
-          if (typeof dep === "string" && dep[0] !== "." && dep[0] !== "/") {
-            dependencies.add(dep);
-          }
+            const dep = node.arguments[0].value;
+            if (dep.startsWith("./") || dep.startsWith("../")) return; 
+            
+            let parentPackage;
+            if (dep.startsWith("@")) {
+              parentPackage = dep.split("/").slice(0, 2).join("/");
+            } else {
+              parentPackage = dep.split("/")[0];
+            }
+            dependencies.add(parentPackage);
         }
       },
-    };
-
-    // Build a custom base that adds empty functions for JSX node types
-    const customBase = Object.assign({}, walk.base, {
-      JSXElement: () => {},
-      JSXFragment: () => {},
-      JSXOpeningElement: () => {},
-      JSXClosingElement: () => {},
-      JSXAttribute: () => {},
-      JSXIdentifier: () => {},
-      JSXText: () => {},
-      JSXExpressionContainer: () => {},
     });
-
-    walk.simple(ast, visitors, customBase);
 
     const depsArray = Array.from(dependencies);
     console.log(`Dependencies found in ${filePath}:`, depsArray);
