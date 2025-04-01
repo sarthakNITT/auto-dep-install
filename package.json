@@ -15,17 +15,19 @@
     "url": "https://github.com/sarthakNITT/auto-dep-install"
   },
   "scripts": {
-    "auto-install": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "auto install",
     "dependencies",
     "npm",
-    "auto package install"
+    "package manager",
+    "auto package install",
+    "automatic dependency installation"
   ],
   "author": "Sarthak karode",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@babel/parser": "^7.27.0",
     "@babel/traverse": "^7.27.0",

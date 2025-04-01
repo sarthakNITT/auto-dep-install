@@ -9,7 +9,7 @@ const IGNORED_PATHS = new Set([
   "package-lock.json", "yarn.lock", "pnpm-lock.yaml", ".env", ".DS_Store",
   ".eslintcache", ".prettierignore", ".prettierrc", ".babelrc", ".editorconfig",
   "metro.config.js", "babel.config.js", "jest.config.js", "tsconfig.json",
-  "webpack.config.js, App.test.tsx"
+  "webpack.config.js", "App.test.tsx"
 ]);
 
 function shouldIgnore(filePath) {
