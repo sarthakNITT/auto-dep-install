@@ -38,7 +38,7 @@ auto-install --help
 ### Watch Mode (Recommended)
 Start monitoring your project with:
 ```sh
-auto-install
+npx auto-install
 ```
 The tool will watch for changes in your project files (e.g., `.js`, `.jsx`, `.ts`, `.tsx`) and update dependencies automatically.
 
