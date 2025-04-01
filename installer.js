@@ -183,7 +183,7 @@ const uninstallUnusedDependencies = (projectDependencies) => {
     // *****----->>>>>OLD CODE<<<<<-----*****
     // const installedPackages = getInstalledPackages();
     // const unusedPackages = installedPackages.filter(pkg => !projectDependencies.includes(pkg));
-    const installedPackages = Object.keys(getInstalledPackages()); // Convert back to array
+    const installedPackages = Object.keys(getInstalledPackages()); 
     const unusedPackages = installedPackages.filter(pkg => !projectDependencies.includes(pkg));
 
 

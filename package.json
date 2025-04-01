@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "postinstall": "chmod +x index.js"
   },
   "keywords": [
     "auto install",
@@ -38,5 +39,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
