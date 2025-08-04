@@ -1,8 +1,11 @@
-const parser = require("@babel/parser");
-const traverse = require("@babel/traverse").default;
-const fs = require("fs");
-const path = require("path");
+import * as parser from "@babel/parser";
+import * as babelTraverse from "@babel/traverse";
+import fs from "fs"
+import path from "path";
+import type { ImportDeclaration as ImportDeclNode, CallExpression as CallExprNode } from "@babel/types";
+import { isIdentifier } from "@babel/types";
 
+const traverse = (babelTraverse as any).default || babelTraverse;
 const IGNORED_PATHS = new Set([
   "node_modules", "dist", "build", ".git", ".github", ".vscode", ".idea", ".expo",
   ".expo-shared", "coverage", "test-results", "logs", "Pods", "ios", "android",
@@ -12,12 +15,12 @@ const IGNORED_PATHS = new Set([
   "webpack.config.js", "App.test.tsx"
 ]);
 
-function shouldIgnore(filePath) {
+export function shouldIgnore(filePath: string): boolean{
   const relativePath = path.relative(process.cwd(), filePath);
   return IGNORED_PATHS.has(path.basename(filePath)) || relativePath.split(path.sep).some(segment => IGNORED_PATHS.has(segment));
 }
 
-function analyzeFile(filePath) {
+export function analyzeFile(filePath: string): string[] {
   if (shouldIgnore(filePath)) {
     console.log(`Skipping ignored file: ${filePath}`);
     return [];
@@ -86,7 +89,7 @@ function analyzeFile(filePath) {
     // });
 
     traverse(ast, {
-      ImportDeclaration({ node }) {
+      ImportDeclaration({ node }: { node: ImportDeclNode }) {
         const dep = node.source.value;
         if (dep.startsWith("./") || dep.startsWith("../")) return; 
         
@@ -98,11 +101,12 @@ function analyzeFile(filePath) {
         }
         dependencies.add(parentPackage);
       },
-      CallExpression({ node }) {
+      CallExpression({ node }: { node: CallExprNode }) {
         if (
-          node.callee?.name === "require" &&
-          node.arguments?.length === 1 &&
-          node.arguments[0].type === "StringLiteral"
+          isIdentifier(node.callee) &&
+          node.callee.name === "require" &&
+          node.arguments.length === 1 &&
+          node.arguments[0]?.type === "StringLiteral"
         ) {
             const dep = node.arguments[0].value;
             if (dep.startsWith("./") || dep.startsWith("../")) return; 
@@ -118,13 +122,11 @@ function analyzeFile(filePath) {
       },
     });
 
-    const depsArray = Array.from(dependencies);
+    const depsArray = Array.from(dependencies) as string[];
     console.log(`Dependencies found in ${filePath}:`, depsArray);
     return depsArray;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Parsing error in ${filePath}:`, error.message);
     return [];
   }
 }
-
-module.exports = { analyzeFile, shouldIgnore, analyzeFile };

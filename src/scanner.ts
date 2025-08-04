@@ -1,8 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const { analyzeFile } = require("./analyzer");
+import fs from "fs";
+import path from "path";
+import { analyzeFile } from "./analyzer.js"
 
-function getAllFiles(dir, fileList = []) {
+export function getAllFiles(dir: string, fileList: string[] = []): string[] {
     // *****----->>>>>OLD CODE<<<<<-----*****
     // const files = fs.readdirSync(dir);
     const files = fs.readdirSync(dir) || []; 
@@ -21,7 +21,7 @@ function getAllFiles(dir, fileList = []) {
     return fileList;
 }
 
-function scanProjectDependencies() {
+export function scanProjectDependencies() {
     console.log("Scanning all files for dependencies...");
     const projectFiles = getAllFiles(path.resolve("./"));
     const dependenciesSet = new Set();
@@ -35,5 +35,3 @@ function scanProjectDependencies() {
     console.log("Final dependencies:", [...dependenciesSet]); 
     return [...dependenciesSet];
 }
-
-module.exports = { scanProjectDependencies, getAllFiles };

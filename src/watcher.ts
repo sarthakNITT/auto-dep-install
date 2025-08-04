@@ -1,19 +1,19 @@
-const chokidar = require("chokidar");
-const path = require("path");
-const { scanProjectDependencies } = require("./scanner");
-const { installMissingDependencies, uninstallUnusedDependencies } = require("./installer");
+import chokidar from "chokidar"
+import path from "path"
+import { scanProjectDependencies } from "./scanner.js"
+import { installMissingDependencies, uninstallUnusedDependencies } from "./installer.js"
 
-function debounce(func, wait) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
+export function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: ReturnType<typeof setTimeout>; 
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(null, args), wait);
+    }
 }
 
 let hasStarted = false;
 
-const watchFiles = () => {
+export const watchFiles = () => {
 
     if (hasStarted) return;
     hasStarted = true;  
@@ -45,14 +45,14 @@ const watchFiles = () => {
         
         if (!hasStarted) {
             hasStarted = true;  
-            const deps = scanProjectDependencies();
+            const deps = scanProjectDependencies() as string[];
             installMissingDependencies(deps);
             uninstallUnusedDependencies(deps);
         }
     });    
 
     const updateDependencies = debounce(() => {
-        const deps = scanProjectDependencies();
+        const deps = scanProjectDependencies() as string[];
         installMissingDependencies(deps);
         uninstallUnusedDependencies(deps);
     }, 500);
@@ -78,5 +78,3 @@ const watchFiles = () => {
         console.error("Chokidar error:", error);
     });
 };
-
-module.exports = { watchFiles, debounce };

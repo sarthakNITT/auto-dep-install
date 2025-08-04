@@ -1,6 +1,7 @@
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+import path from "path";
+import fs from "fs";
+import { execSync } from "child_process";
+
 // *****----->>>>>OLD CODE<<<<<-----*****
 // const getInstalledPackages = () => {
 //     try {
@@ -13,7 +14,7 @@ const path = require("path");
 //         return [];
 //     }
 // };
-const getInstalledPackages = () => {
+export const getInstalledPackages = (): Record<string, string> => {
     try {
         const packageJson = JSON.parse(fs.readFileSync(path.resolve("package.json"), "utf-8"));
         console.log("Installed dependencies from package.json:", packageJson.dependencies);
@@ -22,22 +23,20 @@ const getInstalledPackages = () => {
         return packageJson.dependencies || {};
     } catch (err) {
         console.error("package.json not found. Run 'npm init -y' first.");
-        return [];
+        return {};
     }
 };
 
-
-
-const getLatestVersion = (pkg) => {
+export const getLatestVersion = (pkg: string): string | null => {
     try {
         return execSync(`npm show ${pkg} version`).toString().trim();
-    } catch (error) {
+    } catch (error: any) {
         console.error(`Error fetching latest version for ${pkg}:`, error.message);
         return null;
     }
 };
 
-const findCompatibleVersion = (pkg) => {
+export const findCompatibleVersion = (pkg: string): string | null => {
     try {
         const installedPackages = JSON.parse(fs.readFileSync("package.json", "utf-8")).dependencies;
         // *****----->>>>>OLD CODE<<<<<-----*****
@@ -49,13 +48,12 @@ const findCompatibleVersion = (pkg) => {
             return null;
         }
 
-        
-        if (!peerDependency) {
+        if (!peerDependencyOutput) {
             console.log(`No peer dependencies found for ${pkg}.`);
             return null;
         }
 
-        const peerDepName = Object.keys(JSON.parse(peerDependency))[0];  
+        const peerDepName = Object.keys(JSON.parse(peerDependencyOutput))[0] || "";  
         const installedPeerVersion = installedPackages[peerDepName];
 
         if (!installedPeerVersion) {
@@ -82,12 +80,12 @@ const findCompatibleVersion = (pkg) => {
                 console.warn(`Skipping ${pkg}@${version} due to an error fetching peer dependencies.`);
             }
                         
-            if (peerDepsForVersion) {
-                const parsedPeerDeps = JSON.parse(peerDepsForVersion);
-                if (parsedPeerDeps[peerDepName] && parsedPeerDeps[peerDepName].includes(installedPeerVersion)) {
-                    return version;
-                }
-            }
+            // if (peerDepsForVersion) {
+            //     const parsedPeerDeps = JSON.parse(peerDepsForVersion);
+            //     if (parsedPeerDeps[peerDepName] && parsedPeerDeps[peerDepName].includes(installedPeerVersion)) {
+            //         return version;
+            //     }
+            // }
         }
 
         return null;
@@ -97,8 +95,8 @@ const findCompatibleVersion = (pkg) => {
     }
 };
 
-const installMissingDependencies = (dependencies) => {
-    const installedPackages = getInstalledPackages();
+export const installMissingDependencies = (dependencies: string[]): void => {
+    const installedPackages: Record<string, string> = getInstalledPackages();
     const validPackages = dependencies.filter(pkg => !pkg.startsWith(".") && !pkg.startsWith("/"));
     // *****----->>>>>OLD CODE<<<<<-----*****
     // const missingPackages = validPackages.filter(pkg => !installedPackages.includes(pkg));
@@ -139,7 +137,7 @@ const installMissingDependencies = (dependencies) => {
                 try {
                     execSync(`npm install ${pkg}`, { stdio: "inherit" });
                     console.log(`Successfully installed ${pkg}`);
-                } catch (error) {
+                } catch (error: any) {
                     if (error.message.includes("could not resolve dependency")) {
                         console.warn(`Peer dependency conflict detected for ${pkg}. Finding a compatible version...`);
                         const compatibleVersion = findCompatibleVersion(pkg);
@@ -179,7 +177,7 @@ const installMissingDependencies = (dependencies) => {
     }
 };
 
-const uninstallUnusedDependencies = (projectDependencies) => {
+export const uninstallUnusedDependencies = (projectDependencies: string[]): void => {
     // *****----->>>>>OLD CODE<<<<<-----*****
     // const installedPackages = getInstalledPackages();
     // const unusedPackages = installedPackages.filter(pkg => !projectDependencies.includes(pkg));
@@ -199,5 +197,3 @@ const uninstallUnusedDependencies = (projectDependencies) => {
         }
     }
 };
-
-module.exports = { installMissingDependencies, uninstallUnusedDependencies, getInstalledPackages, getLatestVersion, findCompatibleVersion };

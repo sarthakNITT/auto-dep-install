@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-const { watchFiles } = require("./watcher");
-const { installMissingDependencies, uninstallUnusedDependencies } = require("./installer");
-const { scanProjectDependencies } = require("./scanner");
 
-function runCLI() {
+import { watchFiles } from "./watcher.js"
+import { installMissingDependencies, uninstallUnusedDependencies } from "./installer.js"
+import { scanProjectDependencies } from "./scanner.js"
+
+export function runCLI() {
     const args = process.argv.slice(2);
 
     if (args.includes("--install")) {
-        const projectDependencies = scanProjectDependencies();
+        const projectDependencies = scanProjectDependencies() as string[];
         console.log("Scanned project dependencies:", projectDependencies);
         installMissingDependencies(projectDependencies);
         uninstallUnusedDependencies(projectDependencies);
@@ -24,5 +25,3 @@ function runCLI() {
 if (require.main === module) {
     runCLI();
 }
-
-module.exports = { runCLI };
