@@ -3,11 +3,11 @@
   "version": "1.0.2",
   "main": "src/index.ts",
   "files": [
-    "src"
+    "dist"
   ],
   "description": "Automatically detects the package being used in the code and install it in the project env. User doesn't need to install packages manually now, they can write code smoothly without thinking about the package installation and linking",
   "bin": {
-    "auto-install": "src/index.ts"
+    "auto-install": "dist/index.js"
   },
   "bugs": {
     "url": "https://github.com/sarthakNITT/auto-dep-install/issues"
@@ -21,7 +21,9 @@
     "postinstall": "chmod +x src/index.ts",
     "start": "tsc && node dist/index.js && ts-node src/index.ts",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:watch": "jest --watch",
+    "build": "npm run build"
   },
   "keywords": [
     "auto install",
@@ -34,10 +36,21 @@
   "author": "Sarthak karode",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
     "jest": "^29.7.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0"
   },
   "engines": {
     "node": ">=16.0.0"

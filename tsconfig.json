@@ -1,5 +1,7 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
+  "exclude": ["node_modules", "test", "dist"],
+  "include": ["src", "test", "dist"],
   "compilerOptions": {
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -11,7 +13,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "CommonJS",
     "target": "ESNext",
-    "types": ["node"],
+    "types": ["jest", "node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
