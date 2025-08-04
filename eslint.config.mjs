@@ -27,6 +27,9 @@ export default [
       'eqeqeq': ['error', 'always'],
       'curly': ['error', 'all'],
       'prettier/prettier': 'error',
-    },
+    }
   },
+  {
+    ignores: ['dist', 'node_modules'],
+  },    
 ];
