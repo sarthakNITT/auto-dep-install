@@ -1,7 +1,7 @@
 import chokidar from "chokidar"
 import path from "path"
-import { scanProjectDependencies } from "./scanner.js"
-import { installMissingDependencies, uninstallUnusedDependencies } from "./installer.js"
+import { scanProjectDependencies } from "./scanner"
+import { installMissingDependencies, uninstallUnusedDependencies } from "./installer"
 
 export function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
     let timeout: ReturnType<typeof setTimeout>; 
@@ -42,14 +42,14 @@ export const watchFiles = () => {
     // });
     watcher.on("ready", () => {
         console.log("Initial scan complete. Watching for file changes...");
-        
-        if (!hasStarted) {
-            hasStarted = true;  
+
+        if (initialRun) {
+            initialRun = false;
             const deps = scanProjectDependencies() as string[];
             installMissingDependencies(deps);
             uninstallUnusedDependencies(deps);
         }
-    });    
+    });
 
     const updateDependencies = debounce((filePath: string) => {
         const deps = scanProjectDependencies() as string[];

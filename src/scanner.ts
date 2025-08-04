@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { analyzeFile } from "./analyzer.js"
+import { analyzeFile } from "./analyzer"
 
 export function getAllFiles(dir: string, fileList: string[] = []): string[] {
     // *****----->>>>>OLD CODE<<<<<-----*****

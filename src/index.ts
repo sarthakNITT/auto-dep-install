@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { watchFiles } from "./watcher.js"
-import { installMissingDependencies, uninstallUnusedDependencies } from "./installer.js"
-import { scanProjectDependencies } from "./scanner.js"
+import { watchFiles } from "./watcher"
+import { installMissingDependencies, uninstallUnusedDependencies } from "./installer"
+import { scanProjectDependencies } from "./scanner"
 
 export function runCLI() {
     const args = process.argv.slice(2);
