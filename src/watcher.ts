@@ -51,27 +51,29 @@ export const watchFiles = () => {
         }
     });    
 
-    const updateDependencies = debounce(() => {
+    const updateDependencies = debounce((filePath: string) => {
         const deps = scanProjectDependencies() as string[];
-        installMissingDependencies(deps);
+        // if it’s a .ts or .tsx file, pass true so installer can add @types/…
+        const isTs = /\.tsx?$/.test(filePath);
+        installMissingDependencies(deps, isTs);
         uninstallUnusedDependencies(deps);
     }, 500);
 
     watcher.on("add", (filePath) => {
         if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
         console.log(`File added: ${filePath}`);
-        updateDependencies();
+        updateDependencies(filePath);
     });
 
     watcher.on("change", (filePath) => {
         if (!filePath.match(/\.(js|jsx|ts|tsx)$/)) return;
         console.log(`File changed: ${filePath}`);
-        updateDependencies();
+        updateDependencies(filePath);
     });
 
     watcher.on("unlink", (filePath) => {
         console.log(`File removed: ${filePath}`);
-        updateDependencies();
+        updateDependencies(filePath);
     });
 
     watcher.on("error", (error) => {

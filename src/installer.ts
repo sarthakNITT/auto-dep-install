@@ -95,7 +95,7 @@ export const findCompatibleVersion = (pkg: string): string | null => {
     }
 };
 
-export const installMissingDependencies = (dependencies: string[]): void => {
+export const installMissingDependencies = (dependencies: string[], isTs: boolean = false): void => {
     const installedPackages: Record<string, string> = getInstalledPackages();
     const validPackages = dependencies.filter(pkg => !pkg.startsWith(".") && !pkg.startsWith("/"));
     // *****----->>>>>OLD CODE<<<<<-----*****
@@ -131,6 +131,18 @@ export const installMissingDependencies = (dependencies: string[]): void => {
         //         console.error("Error installing dependencies:", error);
         //     }
         // }
+
+        // collect @types/... for TS context
+        const devDeps: string[] = [];
+        if (isTs) {
+          for (let pkg of missingPackages) {
+            const typesPkg = `@types/${pkg}`;
+            try {
+              execSync(`npm show ${typesPkg} version`, { stdio: "ignore" });
+              devDeps.push(typesPkg);
+            } catch { /* skip if not found */ }
+          }
+        }
         if (missingPackages.length > 0) {
             console.log(`Installing missing packages: ${missingPackages.join(", ")}`);
             missingPackages.forEach(pkg => {
@@ -162,7 +174,12 @@ export const installMissingDependencies = (dependencies: string[]): void => {
                         }
                     }
                 }                
-            });
+            })
+            // now install any collected types
+            if (devDeps.length) {
+                console.log(`Installing types: ${devDeps.join(", ")}`);
+                execSync(`npm install --save-dev ${devDeps.join(" ")}`, { stdio: "inherit" });
+            }
         }        
 
         if (outdatedPackages.length > 0) {
