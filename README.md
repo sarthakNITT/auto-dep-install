@@ -3,8 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/auto-dep-install)](https://www.npmjs.com/package/auto-dep-install)
 [![npm downloads](https://img.shields.io/npm/dw/auto-dep-install)](https://www.npmjs.com/package/auto-dep-install)
 [![License](https://img.shields.io/npm/l/auto-dep-install)](./LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/your-github-username/auto-dep-install?style=social)](https://github.com/your-github-username/auto-dep-install)
-[![Sponsor](https://img.shields.io/badge/Sponsor-❤-ff69b4)](https://github.com/sponsors/your-github-username)
+[![GitHub stars](https://img.shields.io/github/stars/sarthakNITT/auto-dep-install?style=social)](https://github.com/sarthakNITT/auto-dep-install)
+[![Sponsor](https://img.shields.io/badge/Sponsor-❤-ff69b4)](https://github.com/sponsors/sarthakNITT)
 
 **Auto-Dep-Install** is a Node.js CLI tool designed to streamline dependency management, making it easier for developers to focus on coding without being interrupted by the need to manually run `npm install package` or `npm update package`. This tool automatically installs missing packages, updates outdated ones, and removes unused dependencies—without any manual intervention required.
 
